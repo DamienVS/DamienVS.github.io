@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"/>
+  </head>
+  <body>
+    <h3>Web usb super test from hell.</h3>
+    <h4>Q. What is WebUSB ?</h4>
+    <p>A. WebUSB is a chrome bases pending standard, implemented in chrome since version 54. It give to websites the capacity to connect to USB devices, with the client approval and in secured environment (https) only.<p>
+    <button id="#readmeup">READ THE FUCK OUT OF IT !</button>
+    
+    <script>
+    $('body').on('click','#readmeup',()=>{  
+  navigator.usb.requestDevice({
+    filters: [{ vendorId: 0x2341 }] 
+  });
+});
+navigator.usb.getDevices().then((devices) => {
+  console.log("all stuff :");
+  console.log(devices);
+})
+navigator.usb.addEventListener('connect', (event) => {
+  console.log("new stuff :");
+  console.log(event.device);
+});
+        navigator.usb.addEventListener('disconnect', (event) => {
+  console.log("old stuff :");
+  console.log(event.device);
+});
+  </script>
+    
+    
+  </body>
+</html>
