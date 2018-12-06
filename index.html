@@ -24,34 +24,34 @@
       font-weight: normal;
       color:#444;
     }
+    body{
+      padding:2rem;
+    }
     </style>
   </head>
   <body>
-    <div class="row">
-      <div clas=".col-md-12 .center">
-        <h3>Get ID information from .eid files</h3>
-        <h5>Q. How to get my .eid file ?</h5>
-        <p>A. Install ied-mw and eid-viewer for your OS. Plug your ID, open with eid-reader, "File" > "Save as", Profit !!1!</p>
+      <h3>Get ID information from .eid files</h3>
+      <h5>Q. How to get my .eid file ?</h5>
+      <p>A. Install ied-mw and eid-viewer for your OS. Plug your ID, open with eid-reader, "File" > "Save as", Profit !!1!</p>
+      <br/>
+      <div id="dropbox" class=".col-md-6 .col-md-offset-3"> Drop .eid file here</div>
+      <br/>
+      <br/>
+      <div id="frame">
+        <canvas id="photo"></canvas>
       </div>
-    </div>
-    <div class="row">
-      <div id="dropbox" class=".col-md-6"> Drop .eid file here</div>
-    </div>
-    <div id="frame">
-      <canvas id="photo"></canvas>
-    </div>
-    <p>name: <span id="name"/></p>
-    <p>firstname: <span id="firstname"/></p>
-    <p>nationality: <span id="nationality"/></p>
-    <p>placeofbirth: <span id="placeofbirth"/></p>
+      <p>name: <span id="name"/></p>
+      <p>firstname: <span id="firstname"/></p>
+      <p>nationality: <span id="nationality"/></p>
+      <p>placeofbirth: <span id="placeofbirth"/></p>
 
-    <p>nationalnumber: <span id="nationalnumber"/></p>
-    <p>dateofbirth: <span id="dateofbirth"/></p>
-    <p>gender: <span id="gender"/></p>
+      <p>nationalnumber: <span id="nationalnumber"/></p>
+      <p>dateofbirth: <span id="dateofbirth"/></p>
+      <p>gender: <span id="gender"/></p>
 
-    <p>cardnumber: <span id="cardnumber"/></p>
-    <p>cardvalidity: <span id="validitydatebegin"></span> to <span id="validitydateend"></span> </p>
-    <p>address: <span id="streetandnumber"></span>, <span id="zip"></span> <span id="municipality"></span></p>
+      <p>cardnumber: <span id="cardnumber"/></p>
+      <p>cardvalidity: <span id="validitydatebegin"></span> to <span id="validitydateend"></span> </p>
+      <p>address: <span id="streetandnumber"></span>, <span id="zip"></span> <span id="municipality"></span></p>
 
 
     <script>
