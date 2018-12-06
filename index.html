@@ -1,39 +1,118 @@
 <html>
   <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
-    <link type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <style>
+    #dropbox{
+      height:200px;
+      border:1px solid grey;
+    }
+    #dropbox.fileover{
+      border:5px dashed blue;
+    }
+    #frame{
+      border: 1px solid #ddd;
+      width:150px;
+      height:150px;
+    }
+    p{
+      font-weight: bold;
+    }
+    p span{
+      font-weight: normal;
+      color:#444;
+    }
+    </style>
   </head>
   <body>
-    <div clas=".col-md-12 .center">
-      <h3>Web usb super test from hell.</h3>
-      <h4>Q. What is WebUSB ?</h4>
-      <p>A. WebUSB is a chrome bases pending standard, implemented in chrome since version 54. It give to websites the capacity to connect to USB devices, with the client approval and in secured environment (https) only.<p>
+    <div class="row">
+      <div clas=".col-md-12 .center">
+        <h3>Get ID information from .eid files</h3>
+      </div>
     </div>
-    <div class="col-md-6 .center">
-      <button id="#readmeup" class="btn btn-primary">READ IT !</button>
+    <div class="row">
+      <div id="dropbox" class=".col-md-6"> Drop .eid file here</div>
     </div>
+    <div id="frame">
+      <canvas id="photo"></canvas>
+    </div>
+    <p>name: <span id="name"/></p>
+    <p>firstname: <span id="firstname"/></p>
+    <p>nationality: <span id="nationality"/></p>
+    <p>placeofbirth: <span id="placeofbirth"/></p>
+
+    <p>nationalnumber: <span id="nationalnumber"/></p>
+    <p>dateofbirth: <span id="dateofbirth"/></p>
+    <p>gender: <span id="gender"/></p>
+
+    <p>cardnumber: <span id="cardnumber"/></p>
+    <p>cardvalidity: <span id="validitydatebegin"></span> to <span id="validitydateend"></span> </p>
+    <p>address: <span id="streetandnumber"></span>, <span id="zip"></span> <span id="municipality"></span></p>
+
 
     <script>
+    $(()=>{
 
-      $('body').on('click','#readmeup',()=>{
-        navigator.usb.requestDevice({
-          filters: [{ vendorId: 0x2341 }]
-        });
-      });
-      navigator.usb.getDevices().then((devices) => {
-        console.log("all stuff :");
-        console.log(devices);
-      })
-      navigator.usb.addEventListener('connect', (event) => {
-        console.log("new stuff :");
-        console.log(event.device);
-      });
-              navigator.usb.addEventListener('disconnect', (event) => {
-        console.log("old stuff :");
-        console.log(event.device);
-      });
+      var iedReader = new FileReader()
 
+      if (window.File && window.FileList && window.FileReader) {
+          $("#dropbox").on("dragover", (evt)=> {
+	          evt.preventDefault();
+            $("#dropbox").addClass("fileover");
+          });
+		      $("#dropbox").on("dragleave", (evt)=> {
+	          evt.preventDefault();
+            $("#dropbox").removeClass("fileover");
+          });
+		      $("#dropbox").on("drop", (evt)=> {
+	          evt.preventDefault();
+            $("#dropbox").removeClass("fileover");
+
+            console.log(evt);
+            var files = evt.originalEvent.target.files || evt.originalEvent.dataTransfer.files;
+            console.log(files);
+            for(let file of files){
+              console.log(file);
+              if(file.name.endsWith(".eid")){
+                iedReader.readAsText(file);
+                console.log(iedReader.result);
+              }
+            }
+          });
+
+          iedReader.addEventListener("loadend", ()=> {
+	          let iedXml = $.parseXML(iedReader.result);
+            console.info(iedXml);
+            $("#name").text($(iedXml).find("name").text());
+            $("#firstname").text($(iedXml).find("firstname").text());
+            $("#nationality").text($(iedXml).find("nationality").text());
+            $("#placeofbirth").text($(iedXml).find("placeofbirth").text());
+            $("#nationalnumber").text($(iedXml).find("identity").attr("nationalnumber"));
+            $("#dateofbirth").text($(iedXml).find("identity").attr("dateofbirth"));
+            $("#gender").text($(iedXml).find("identity").attr("gender"));
+            $("#cardnumber").text($(iedXml).find("card").attr("cardnumber"));
+            $("#validitydatebegin").text($(iedXml).find("card").attr("validitydatebegin"));
+            $("#validitydateend").text($(iedXml).find("card").attr("validitydateend"));
+            $("#streetandnumber").text($(iedXml).find("streetandnumber").text());
+            $("#zip").text($(iedXml).find("zip").text());
+            $("#municipality").text($(iedXml).find("municipality").text());
+
+
+            var canvas = document.getElementById("photo");
+            var ctx = canvas.getContext("2d");
+
+            var image = new Image();
+            image.onload = function() {
+              ctx.drawImage(image, 0, 0);
+            };
+            image.src = "data:image/jpeg;base64,"+$(iedXml).find("photo").text();
+
+          });
+      }
+
+    });
   </script>
 
 
