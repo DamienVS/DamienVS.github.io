@@ -1,0 +1,122 @@
+<html>
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <style>
+    #dropbox{
+      height:200px;
+      border:1px solid grey;
+    }
+    #dropbox.fileover{
+      border:5px dashed blue;
+    }
+    #frame{
+      border: 1px solid #ddd;
+      width:150px;
+      height:150px;
+    }
+    p{
+      font-weight: bold;
+    }
+    p span{
+      font-weight: normal;
+      color:#444;
+    }
+    body{
+      padding:2rem;
+    }
+    </style>
+  </head>
+  <body>
+      <h2>Get ID information from .eid files</h2>
+      <h3>Q. How to get my .eid file ?</h3>
+      <p>A. Install <a href="https://eid.belgium.be/en/how-install-eid-software">ied-mw and eid-viewer</a> for your OS. Plug your ID, open with eid-reader, "File" > "Save as", Profit !!1!</p>
+      <br/>
+      <div id="dropbox" class=".col-md-6 .col-md-offset-3"> Drop .eid file here</div>
+      <br/>
+      <br/>
+      <div id="frame">
+        <canvas id="photo"></canvas>
+      </div>
+      <p>name: <span id="name"/></p>
+      <p>firstname: <span id="firstname"/></p>
+      <p>nationality: <span id="nationality"/></p>
+      <p>placeofbirth: <span id="placeofbirth"/></p>
+
+      <p>nationalnumber: <span id="nationalnumber"/></p>
+      <p>dateofbirth: <span id="dateofbirth"/></p>
+      <p>gender: <span id="gender"/></p>
+
+      <p>cardnumber: <span id="cardnumber"/></p>
+      <p>cardvalidity: <span id="validitydatebegin"></span> to <span id="validitydateend"></span> </p>
+      <p>address: <span id="streetandnumber"></span>, <span id="zip"></span> <span id="municipality"></span></p>
+
+
+    <script>
+    $(()=>{
+
+      var iedReader = new FileReader()
+
+      if (window.File && window.FileList && window.FileReader) {
+          $("#dropbox").on("dragover", (evt)=> {
+	          evt.preventDefault();
+            $("#dropbox").addClass("fileover");
+          });
+		      $("#dropbox").on("dragleave", (evt)=> {
+	          evt.preventDefault();
+            $("#dropbox").removeClass("fileover");
+          });
+		      $("#dropbox").on("drop", (evt)=> {
+	          evt.preventDefault();
+            $("#dropbox").removeClass("fileover");
+
+            console.log(evt);
+            var files = evt.originalEvent.target.files || evt.originalEvent.dataTransfer.files;
+            console.log(files);
+            for(let file of files){
+              console.log(file);
+              if(file.name.endsWith(".eid")){
+                iedReader.readAsText(file);
+                console.log(iedReader.result);
+              }
+            }
+          });
+
+          iedReader.addEventListener("loadend", ()=> {
+	          let iedXml = $.parseXML(iedReader.result);
+            console.info(iedXml);
+            $("#name").text($(iedXml).find("name").text());
+            $("#firstname").text($(iedXml).find("firstname").text());
+            $("#nationality").text($(iedXml).find("nationality").text());
+            $("#placeofbirth").text($(iedXml).find("placeofbirth").text());
+            $("#nationalnumber").text($(iedXml).find("identity").attr("nationalnumber"));
+            $("#dateofbirth").text($(iedXml).find("identity").attr("dateofbirth"));
+            $("#gender").text($(iedXml).find("identity").attr("gender"));
+            $("#cardnumber").text($(iedXml).find("card").attr("cardnumber"));
+            $("#validitydatebegin").text($(iedXml).find("card").attr("validitydatebegin"));
+            $("#validitydateend").text($(iedXml).find("card").attr("validitydateend"));
+            $("#streetandnumber").text($(iedXml).find("streetandnumber").text());
+            $("#zip").text($(iedXml).find("zip").text());
+            $("#municipality").text($(iedXml).find("municipality").text());
+
+
+            var canvas = document.getElementById("photo");
+            var ctx = canvas.getContext("2d");
+
+            var image = new Image();
+            image.onload = function() {
+              ctx.drawImage(image, 0, 0);
+            };
+            image.src = "data:image/jpeg;base64,"+$(iedXml).find("photo").text();
+
+          });
+      }
+
+    });
+  </script>
+
+
+  </body>
+</html>

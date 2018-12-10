@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin="" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.4/leaflet.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js" type="text/javascript"></script>
+    <script src="js/shp.min.js"></script>
+    <script src="js/leaflet.shpfile.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js" type="text/javascript"></script>
+    <script src="js/map.js" type="text/javascript"></script>
+    <style>
+        #map {
+            width: 80vw;
+            height: 80vh;
+            margin: 10vh 10vw;
+            border: 3px dotted black;
+        }
+        .point-popup {
+            display: flex;
+            flex-direction: column;
+            align-items:center;
+        }
+
+        .point-popup .measurements {
+            display: flex;
+            height: 5rem;
+        }
+        .point-popup .measurement {
+            display: flex;
+            flex-direction: column;
+            align-items:center;
+            justify-content: space-between;
+padding: 0 5px;
+        }
+.point-popup .measurement.selected{
+  border:2px solid #00a;
+border-radius: 5px;
+background-color: rgba(0,0,160,.2);
+}
+        .point-popup h4{
+  text-decoration: underline;
+margin:.2rem;
+  }
+        .point-popup h5{
+            font-weight: bold;
+            font-size: .8rem;
+margin: 0;
+        }
+        .point-popup .value {
+            font-size: 2em;
+            background-color: transparent;
+        }
+        .point-popup .unit{
+            font-weight: bold;
+            font-size: .6rem;
+        }
+
+        .point {
+            height: 10px: width:10px;
+            border-radius: 100%;
+            border: 2px solid white;
+            background-color: red;
+        }
+
+        .lvl1 {
+            background-color: #0000FF;color: #0000FF;
+        }
+
+        .lvl2 {
+            background-color: #0099FF;color: #0099FF;
+        }
+
+        .lvl3 {
+            background-color: #009900;color: #009900;
+        }
+
+        .lvl4 {
+            background-color: #00FF00;color: #00FF00;
+        }
+
+        .lvl5 {
+            background-color: #FFFF00;color: #FFFF00;
+        }
+
+        .lvl6 {
+            background-color: #FF9900;color: #FF9900;
+        }
+
+        .lvl7 {
+            background-color: #FF6600;color: #FF6600;
+        }
+
+        .lvl8 {
+            background-color: #FF0000;color: #FF0000;
+        }
+
+        .lvl9 {
+            background-color: #990000;color: #990000;
+        }
+
+        .lvl10 {
+            background-color: #660000;color: #660000;
+        }
+    </style>
+    <script id="template-point-popup" type="x-tmpl-mustache">
+        <div class="point-popup">
+      <h4>{{{stationName}}}</h4>
+      <div class="measurements">
+        <div class="measurement belaqi">
+          <h5>BelAQI<sub>&nbsp;</sub></h5>
+          <span class="value lvl{{indexes.belaqi.level}}">{{indexes.belaqi.value}}</span>
+          <span class="unit">&nbsp;</span>
+        </div>
+        <div class="measurement pm10">
+          <h5>PM<sub>10</sub></h5>
+          <span class="value lvl{{indexes.pm10.level}}">{{indexes.pm10.value}}</span>
+          <span class="unit">&micro;g/m<sup>3</sup></span>
+        </div>
+        <div class="measurement pm25">
+          <h5>PM<sub>2.5</sub></h5>
+          <span class="value lvl{{indexes.pm25.level}}">{{indexes.pm25.value}}</span>
+          <span class="unit">&micro;g/m<sup>3</sup></span>
+        </div>
+        <div class="measurement o3 selected">
+          <h5>O<sub>3</sub></h5>
+          <span class="value lvl{{indexes.o3.level}}">{{indexes.o3.value}}</span>
+          <span class="unit">&micro;g/m<sup>3</sup></span>
+        </div>
+        <div class="measurement no2">
+          <h5>NO<sub>2</sub></h5>
+          <span class="value lvl{{indexes.no2.level}}">{{indexes.no2.value}}</span>
+          <span class="unit">&micro;g/m<sup>3</sup></span>
+        </div>
+        <div class="measurement co">
+          <h5>CO<sub>&nbsp;</sub></h5>
+          <span class="value lvl{{indexes.co.level}}">{{indexes.co.value}}</span>
+          <span class="unit">&micro;g/m<sup>3</sup></span>
+        </div>
+        <div class="measurement so2">
+          <h5>SO<sub>2</sub></h5>
+          <span class="value lvl{{indexes.so2.level}}">{{indexes.so2.value}}</span>
+          <span class="unit">&micro;g/m<sup>3</sup></span>
+        </div>
+      </div>
+    </div>
+  </script>
+</head>
+</body>
+<div id="map"></div>
+</body>
+
+</html>
